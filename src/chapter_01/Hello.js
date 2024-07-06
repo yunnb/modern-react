@@ -11,8 +11,4 @@ function Hello(props) {
     );
 }
 
-Hello.defaultProps = {  // 기본값 설정
-    name: "no-name",
-};
-
 export default Hello;
