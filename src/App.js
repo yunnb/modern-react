@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
-import Hello from "./chapter_01/05/Hello";
-import Wrapper from "./chapter_01/05/Wrapper";
+import Hello from "./chapter_01/Hello";
+import Wrapper from "./chapter_01/Wrapper";
 
 function App() {
   return (
