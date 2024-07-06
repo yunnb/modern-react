@@ -97,7 +97,7 @@ const onIncrease = () => {
 그 다음 상태를 파라미터로 넣어준 것이 아니라, 값을 업데이트 하는 함수를 파라미터로 넣어줌   
 → 함수형 업데이트는 주로 컴포넌트를 최적화할 때 사용
 
->``prevNumber`` 는 선언한 적이 없는데 어떻게 사용할 수 있을까?
+>``prevNumber`` 는 선언한 적이 없는데 어떻게 사용할 수 있을까?  
 > 우선 ``prevNumber`` 는 개발자가 임의로 작성한 변수명 
 > ```javascript
 > prevNumber => prevNumber + 1
