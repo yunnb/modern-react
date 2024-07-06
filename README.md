@@ -60,7 +60,6 @@ isSpecial 은 자바스크립트 값이므로 중괄호로 감싸줌
 
 ## 07. useState 를 통해 컴포넌트에서 바뀌는 값 관리하기
 ### Element 에 Event 설정
-```
 ```javascript
 on이벤트이름={실행하고싶은함수}
 ```
