@@ -106,13 +106,13 @@ const onIncrease = () => {
 > ```javascript
 > // prevNumber => prevNumber + 1 와 동일한 함수
 > function noName (prevNumber) { 
-> return prevNumber + 1;
+>     return prevNumber + 1;
 > }
 > ```
 > ```javascript
 > // 익명 함수로 변경 
 > function (preveNumber) { 
-> return prevNumber +1;
+>     return prevNumber +1;
 > }
 > ```
 > ```javascript
