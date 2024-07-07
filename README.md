@@ -2,8 +2,9 @@
 ## 목차
 [# 05. props 를 통해 컴포넌트에게 값 전달하기](#05-props-를-통해-컴포넌트에게-값-전달하기)  
 [# 06. 조건부 렌더링](#06-조건부-렌더링)  
-[# 07. useState 를 통해 컴포넌트에서 바뀌는 값 관리하기](#07-usestate-를-통해-컴포넌트에서-바뀌는-값-관리하기)
-[# 08. input 상태 관리하기](#08-input-상태-관리하기)
+[# 07. useState 를 통해 컴포넌트에서 바뀌는 값 관리하기](#07-usestate-를-통해-컴포넌트에서-바뀌는-값-관리하기)  
+[# 08. input 상태 관리하기](#08-input-상태-관리하기)  
+[# 09. 여러개의 input 상태 관리하기](#09-여러개의-input-상태-관리하기)
 
 ## 05. props 를 통해 컴포넌트에게 값 전달하기
 ### props 는 객체 형태로 전달  
@@ -153,3 +154,66 @@ function InputSample() {
 
 input 상태 관리 시 input 태그의 value 값도 설정해주는 것이 중요.  
 그래야 상태가 바뀌었을 때 input 내용 업데이트 
+
+## 09. 여러개의 input 상태 관리하기
+input의 객체가 여러 개일 때는, 단순히 ``useState``와``onChange`` 여러 번 사용하는 것보다  
+input에 ``name``을 설정하고 이벤트가 발생했을 때 이 값을 참조하는 것이 더 좋은 방법  
+그리고 ``useState``에서는 문자열이 아니라 객체 형태의 상태를 관리해주어야 함 
+```javascript
+import React, { useState } from 'react';
+
+function InputSample() {
+    const [inputs, setInputs] = useState({
+        name: '',
+        nickname: '',
+    });
+
+    const {name, nickname} = inputs; // 비구조화 할당을 통해 값 추출
+
+    const onChange = (e) => {
+        const {value, name} = e.target;  // 우선 e.target 에서 name 과 value 추출
+        setInputs({
+            ...inputs,  // 기존 input 객체 복사
+            [name]: value,  // name 키를 가진 값을 value 로 설정
+        });
+    };
+
+    const onReset = () => {
+        setInputs({
+            name: '',
+            nickname: '',
+        })
+    };
+
+    return (
+        <div>
+            <input name='name' placeholder='name' onChange={onChange} value={name} />
+            <input name='nickname' placeholder='nickname' onChange={onChange} value={nickname} />
+            <button onClick={onReset}>reset</button>
+            <div>
+                <b>value: </b>
+                {name} ({nickname})
+            </div>
+        </div>
+    );
+}
+
+export default InputSample;
+```
+리액트에서 객체 수정 시 
+```javascript
+inputs [name] = value;
+```
+이런 식으로 수정하면 안됨.  
+새로운 객체를 만들어서 새로운 객체에 변화를 주고, 이를 상태로 사용해주어야 함 
+```javascript
+setInputs({
+    ...inputs,
+    [name]: value
+});
+```
+``...``: spread 문법. 객체의 내용을 모두 "펼쳐서" 기존 객체를 복사함  
+=> "불변성을 지킨다"   
+- 리액트 컴포넌트에서 상태 업데이트 감지 가능. 필요에 따른 리렌더링 수행  
+``inputs[name] = value``처럼 기존 상태를 직접 수정하게 되면, 값을 바꿔도 리렌더링 되지 않음   
+- 제대로 된 컴포넌트 업데이트 성능 최적화 가능 
