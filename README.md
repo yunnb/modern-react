@@ -3,6 +3,7 @@
 [# 05. props 를 통해 컴포넌트에게 값 전달하기](#05-props-를-통해-컴포넌트에게-값-전달하기)  
 [# 06. 조건부 렌더링](#06-조건부-렌더링)  
 [# 07. useState 를 통해 컴포넌트에서 바뀌는 값 관리하기](#07-usestate-를-통해-컴포넌트에서-바뀌는-값-관리하기)
+[# 08. input 상태 관리하기](#08-input-상태-관리하기)
 ## 05. props 를 통해 컴포넌트에게 값 전달하기
 ### props 는 객체 형태로 전달  
 ```javascript
@@ -124,3 +125,30 @@ const onIncrease = () => {
 > // arrow function 에서 실행줄이 1줄이면 return 생략 가능 
 > (prevNumver) => prevNumber +1; 
 > ```
+
+## 08. input 상태 관리하기
+### onChange 이벤트 
+```javascript
+function InputSample() {
+    const [text, setText] = useState('');
+ 
+    const onChange = (e) => {
+        setText(e.target.value);
+    };
+    
+    return (
+        <div>
+            <input onChange={onChange} value={text} />
+            <div>
+                <b>value: {text} </b>
+            </div>
+        </div>
+    );
+}
+```
+``onChange`` 이벤트는 이벤트 객체 ``e``를 파라미터로 받아와서 사용 가능  
+이 객체의 ``e.target``은 이벤트가 발생한 DOM인 input DOM을 가리킴  
+이 DOM의 ``value`` 값, 즉 ``e.target.value`` 를 조회하면 현재 input 입력 값 알 수 있음  
+
+input 상태 관리 시 input 태그의 value 값도 설정해주는 것이 중요.  
+그래야 상태가 바뀌었을 때 input 내용 업데이트 
