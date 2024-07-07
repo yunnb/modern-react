@@ -35,10 +35,11 @@ function InputSample() {
                 value={name}
                 ref={nameInput}
             />
-            <input name='nickname'
-                   placeholder='nickname'
-                   onChange={onChange}
-                   value={nickname}
+            <input
+                name='nickname'
+                placeholder='nickname'
+                onChange={onChange}
+                value={nickname}
             />
             <button onClick={onReset}>reset</button>
             <div>

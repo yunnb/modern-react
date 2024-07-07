@@ -202,11 +202,11 @@ function InputSample() {
 
 export default InputSample;
 ```
-리액트에서 객체 수정 시 
+
+리액트에서 객체 수정 시 아래처럼 직접 값 수정하면 안됨 
 ```javascript
 inputs [name] = value;
 ```
-이런 식으로 수정하면 안됨.  
 새로운 객체를 만들어서 새로운 객체에 변화를 주고, 이를 상태로 사용해주어야 함 
 ```javascript
 setInputs({
@@ -219,6 +219,24 @@ setInputs({
 - 리액트 컴포넌트에서 상태 업데이트 감지 가능. 필요에 따른 리렌더링 수행  
 ``inputs[name] = value``처럼 기존 상태를 직접 수정하게 되면, 값을 바꿔도 리렌더링 되지 않음   
 - 제대로 된 컴포넌트 업데이트 성능 최적화 가능 
+
+---
+### 추가 공부 내용
+```javascript
+const onChange = (e) => {
+        const {value, name} = e.target;  // 우선 e.target 에서 name 과 value 추출
+        setInputs({
+            ...inputs,  // 기존 input 객체 복사
+            [name]: value,  // name 키를 가진 값을 value 로 설정
+        });
+    };
+```
+- ``name``: input 태그의 name 속성 값. 즉 현재 name, nickname 존재
+- ``value``: name 속성 값의 value
+- ``[name]``: input 태그의 name 속성 값.  
+  ``[name]``에는 첫 번째 input 에 변경 발생 시 name, 두 번째 input 에 변경 발생 시 nickname 이 들어감  
+  만약 대괄호가 없다면 nickname 에 대한 값은 업데이트 되지 않음
+- 기존 값을 복사하는 이유는, 새로운 객체 생성하여 업데이트 하는 것이므로 구조 유지를 위해서라고 생각
 
 ## 10. useRef 로 특정 DOM 선택하기
 JavaScript 에서 특정 DOM 을 선택해야 하는 상황에 ``getElementById``, ``querySelector`` 같은 DOM Selector 함수를 선택했듯이, 리액트에서는 DOM 을 직접 선택해야할 때 ``ref`` 사용  
@@ -234,7 +252,9 @@ const onClick = () => {
 }
 
 return(
-    <input ref={nameInput} />
-<button onClick={onClick}>클릭</button>
-)
+    <div>
+       <input ref={nameInput} />
+        <button onClick={onClick}>클릭</button>
+    </div>
+);
 ```
