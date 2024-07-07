@@ -4,7 +4,9 @@
 [# 06. 조건부 렌더링](#06-조건부-렌더링)  
 [# 07. useState 를 통해 컴포넌트에서 바뀌는 값 관리하기](#07-usestate-를-통해-컴포넌트에서-바뀌는-값-관리하기)  
 [# 08. input 상태 관리하기](#08-input-상태-관리하기)  
-[# 09. 여러개의 input 상태 관리하기](#09-여러개의-input-상태-관리하기)
+[# 09. 여러개의 input 상태 관리하기](#09-여러개의-input-상태-관리하기)  
+[# 10. useRef 로 특정 DOM 선택하기](#10-useref-로-특정-dom-선택하기)  
+
 
 ## 05. props 를 통해 컴포넌트에게 값 전달하기
 ### props 는 객체 형태로 전달  
@@ -217,3 +219,22 @@ setInputs({
 - 리액트 컴포넌트에서 상태 업데이트 감지 가능. 필요에 따른 리렌더링 수행  
 ``inputs[name] = value``처럼 기존 상태를 직접 수정하게 되면, 값을 바꿔도 리렌더링 되지 않음   
 - 제대로 된 컴포넌트 업데이트 성능 최적화 가능 
+
+## 10. useRef 로 특정 DOM 선택하기
+JavaScript 에서 특정 DOM 을 선택해야 하는 상황에 ``getElementById``, ``querySelector`` 같은 DOM Selector 함수를 선택했듯이, 리액트에서는 DOM 을 직접 선택해야할 때 ``ref`` 사용  
+
+함수형 컴포넌트에서 ``ref`` 사용 시 ``useRef`` 라는 Hook 함수 사용  
+클래스 컴포넌트에서는 콜백 함수를 사용하거나 ``React.createRef`` 함수 사용 (중요 x)
+
+```javascript
+const nameInput = useRef();
+
+const onClick = () => {
+    nameInput.current.focus(); 
+}
+
+return(
+    <input ref={nameInput} />
+<button onClick={onClick}>클릭</button>
+)
+```
