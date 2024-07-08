@@ -7,8 +7,8 @@
 [# 09. 여러개의 input 상태 관리하기](#09-여러개의-input-상태-관리하기)  
 [# 10. useRef 로 특정 DOM 선택하기](#10-useref-로-특정-dom-선택하기)  
 [# 11. 배열 렌더링하기](#11-배열-렌더링하기)  
-[# 12. useRef 로 컴포넌트 안의 변수 만들기](#12-useref-로-컴포넌트-안의-변수-만들기-)  
-
+[# 12. useRef 로 컴포넌트 안의 변수 만들기](#12-useref-로-컴포넌트-안의-변수-만들기)  
+[# 13. 배열에 항목 추가하기](#13-배열에-항목-추가하기)
 
 ## 05. props 를 통해 컴포넌트에게 값 전달하기
 ### props 는 객체 형태로 전달  
@@ -330,7 +330,7 @@ export default UserList;
 > ```
 
 
-## 12. useRef 로 컴포넌트 안의 변수 만들기 
+## 12. useRef 로 컴포넌트 안의 변수 만들기
 `useRef` Hook 은 DOM 선택 용도 외에, 컴포넌트 안에서 조회 및 수정할 수 있는 변수 관리 기능 수행  
 
 `useRef` 로 관리하는 변수는 값이 바뀌어도 컴포넌트가 리렌더링되지 않음.  
@@ -354,3 +354,44 @@ const onCreate = () => {
 ```
 `useRef()` 에 파라미터를 넣어주면 `.current` 값의 기본값이 됨  
 파라미터 값 수정/조회 시 `.current` 를 수정/조회하면 됨 
+
+## 13. 배열에 항목 추가하기
+배열에 변화를 줄 때에는 객체와 마찬가지로 불변성을 지켜야 함  
+따라서 `push`, `splice`, `sort` 등의 함수 사용 불가 (만약 사용한다면, 기존 배열 복사 후 사용)
+
+### `spread` 연산자 활용 
+```javascript
+  const nextId = useRef(4);
+  const onCreate = () => {
+    const user = {
+      id: nextId.current,
+      username,
+      email
+    };
+    setUsers([...users, user]);
+
+    setInputs({
+      username: '',
+      email: ''
+    });
+    nextId.current += 1;
+  };
+```
+### `concat` 함수 사용 
+`concat` 함수는 기존 배열을 수정하지 않고, 새 원소가 추가된 새 배열 생성 
+```javascript
+  const onCreate = () => {
+    const user = {
+      id: nextId.current,
+      username,
+      email
+    };
+    setUsers(users.concat(user));
+
+    setInputs({
+      username: '',
+      email: ''
+    });
+    nextId.current += 1;
+  };
+```
