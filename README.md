@@ -7,6 +7,7 @@
 [# 09. 여러개의 input 상태 관리하기](#09-여러개의-input-상태-관리하기)  
 [# 10. useRef 로 특정 DOM 선택하기](#10-useref-로-특정-dom-선택하기)  
 [# 11. 배열 렌더링하기](#11-배열-렌더링하기)  
+[# 12. useRef 로 컴포넌트 안의 변수 만들기](#12-useref-로-컴포넌트-안의-변수-만들기-)  
 
 
 ## 05. props 를 통해 컴포넌트에게 값 전달하기
@@ -223,21 +224,21 @@ setInputs({
 - 제대로 된 컴포넌트 업데이트 성능 최적화 가능 
 
 ### 추가 공부 내용
-```javascript
-const onChange = (e) => {
-        const {value, name} = e.target;  // 우선 e.target 에서 name 과 value 추출
-        setInputs({
-            ...inputs,  // 기존 input 객체 복사
-            [name]: value,  // name 키를 가진 값을 value 로 설정
-        });
-    };
-```
-- `name`: input 태그의 name 속성 값. 즉 현재 name, nickname 존재
-- `value`: name 속성 값의 value
-- `[name]`: input 태그의 name 속성 값.  
-  `[name]`에는 첫 번째 input 에 변경 발생 시 name, 두 번째 input 에 변경 발생 시 nickname 이 들어감  
-  만약 대괄호가 없다면 nickname 에 대한 값은 업데이트 되지 않음
-- 기존 값을 복사하는 이유는, 새로운 객체 생성하여 업데이트 하는 것이므로 구조 유지를 위해서라고 생각
+>```javascript
+>const onChange = (e) => {
+>       const {value, name} = e.target;  // 우선 e.target 에서 name 과 value 추출
+>       setInputs({
+>           ...inputs,  // 기존 input 객체 복사
+>           [name]: value,  // name 키를 가진 값을 value 로 설정
+>       });
+>   };
+> ```
+>- `name`: input 태그의 name 속성 값. 즉 현재 name, nickname 존재
+>- `value`: name 속성 값의 value
+>- `[name]`: input 태그의 name 속성 값.  
+>   `[name]`에는 첫 번째 input 에 변경 발생 시 name, 두 번째 input 에 변경 발생 시 nickname 이 들어감  
+>  만약 대괄호가 없다면 nickname 에 대한 값은 업데이트 되지 않음
+>- 기존 값을 복사하는 이유는, 새로운 객체 생성하여 업데이트 하는 것이므로 구조 유지를 위해서라고 생각
 
 ## 10. useRef 로 특정 DOM 선택하기
 JavaScript 에서 특정 DOM 을 선택해야 하는 상황에 `getElementById`, `querySelector` 같은 DOM Selector 함수를 선택했듯이, 리액트에서는 DOM 을 직접 선택해야할 때 `ref` 사용  
@@ -318,3 +319,38 @@ export default UserList;
 **`key`가 있을 때**  
 수정되지 않는 기존 값은 그대로 두고 원하는 곳에 내용 삽입, 삭제 
 
+### 추가 공부 내용 
+> **map()**  
+> - 배열 안의 각 원소 변환 시 사용 -> 배열 반환   
+> - 다음 배열 안의 숫자를 모두 제곱하여 새 배열을 만들고 싶을 때   
+> `const arr = [1, 2, 3, 4, 5];` 
+> ```javascript
+> const arr1 = [1, 2, 3, 4, 5];
+> const arr2 = arr.map(n => n * n);  // arr.map((num) => {return n * n});
+> ```
+
+
+## 12. useRef 로 컴포넌트 안의 변수 만들기 
+`useRef` Hook 은 DOM 선택 용도 외에, 컴포넌트 안에서 조회 및 수정할 수 있는 변수 관리 기능 수행  
+
+`useRef` 로 관리하는 변수는 값이 바뀌어도 컴포넌트가 리렌더링되지 않음.  
+리액트 컴포넌트에서 상태는 상태 변환 함수를 호출하고 렌더링 이후 업데이트 된 상태를 조회할 수 있지만, 
+`useRef` 로 관리하는 변수는 설정 후 바로 조회 가능 
+
+`useRef` 변수가 관리할 수 있는 값 
+- `setTimeout`, `setInterval` 을 통해 만들어진 id
+- 외부 라이브러리를 사용해 생성된 인스턴스
+- scroll 위치
+
+배열에 새 항목 추가 시 고유 id 관리하는 `useRef()` 변수
+```javascript
+const nextId = useRef(4);
+
+const onCreate = () => {
+    // 나중에 구현 할 배열에 항목 추가하는 로직
+    
+    nextId.current += 1;
+};
+```
+`useRef()` 에 파라미터를 넣어주면 `.current` 값의 기본값이 됨  
+파라미터 값 수정/조회 시 `.current` 를 수정/조회하면 됨 
