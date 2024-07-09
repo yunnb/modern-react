@@ -9,6 +9,7 @@
 [# 11. 배열 렌더링하기](#11-배열-렌더링하기)  
 [# 12. useRef 로 컴포넌트 안의 변수 만들기](#12-useref-로-컴포넌트-안의-변수-만들기)  
 [# 13. 배열에 항목 추가하기](#13-배열에-항목-추가하기)
+[# 14. 배열에 항목 제거하기](#14-배열에-항목-제거하기)
 
 ## 05. props 를 통해 컴포넌트에게 값 전달하기
 ### props 는 객체 형태로 전달  
@@ -361,7 +362,6 @@ const onCreate = () => {
 
 ### `spread` 연산자 활용 
 ```javascript
-  const nextId = useRef(4);
   const onCreate = () => {
     const user = {
       id: nextId.current,
@@ -369,12 +369,6 @@ const onCreate = () => {
       email
     };
     setUsers([...users, user]);
-
-    setInputs({
-      username: '',
-      email: ''
-    });
-    nextId.current += 1;
   };
 ```
 ### `concat` 함수 사용 
@@ -387,11 +381,20 @@ const onCreate = () => {
       email
     };
     setUsers(users.concat(user));
-
-    setInputs({
-      username: '',
-      email: ''
-    });
-    nextId.current += 1;
   };
+```
+
+## 14. 배열에 항목 제거하기
+삭제 버튼 클릭 시 `user.id` 값을 `onRemove` 함수의 파라미터로 넣어서 호출  
+`onRemove` 는 'id가 __인 객체를 삭제하라' 의 역할을 가짐  
+
+배열에 있는 항목 제거 시, 추가할 때와 마찬가지로 불변성을 지키면서 업데이트해야 함  
+→ `filter` 배열 내장 함수 사용  
+ &nbsp; &nbsp; &nbsp; (특정 조건이 만족하는 원소들만 추출하여 새로운 배열을 만듦)
+```javascript
+const onRemove = id => {
+    // user.id 가 파라미터로 일치하지 않는 원소만 추출해서 새로운 배열을 만듬
+    // = user.id 가 id 인 것을 제거함
+    setUsers(users.filter(user => user.id !== id));
+};
 ```
