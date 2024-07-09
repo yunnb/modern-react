@@ -1,6 +1,15 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 
 function User({ user, onRemove, onToggle}) {
+    useEffect(() => {
+        console.log('User value set');
+        console.log(user);
+        return () => {
+            console.log('Before the user changes...');
+            console.log(user);
+        };
+    }, [user]);
+    
     return (
         <div>
             <b
@@ -14,7 +23,7 @@ function User({ user, onRemove, onToggle}) {
             </b>
             &nbsp;
             <span>({user.email})</span>
-            <button onClick={() => onRemove(user.id)}>삭제</button>
+            <button onClick={() => onRemove(user.id)}>remove</button>
         </div>
     );
 }

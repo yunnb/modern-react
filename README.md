@@ -11,7 +11,7 @@
 [# 13. 배열에 항목 추가하기](#13-배열에-항목-추가하기)  
 [# 14. 배열에 항목 제거하기](#14-배열에-항목-제거하기)  
 [# 15. 배열 항목 수정하기](#15-배열-항목-수정하기)  
-
+[# 16. useEffect를 사용하여 마운트/언마운트/업데이트시 할 작업 설정하기](#16-useeffect를-사용하여-마운트언마운트업데이트시-할-작업-설정하기)
 
 ## 05. props 를 통해 컴포넌트에게 값 전달하기
 ### props 는 객체 형태로 전달  
@@ -429,3 +429,63 @@ const onToggle = id => {
     {user.username}
 </b>
 ```
+
+## 16. useEffect를 사용하여 마운트/언마운트/업데이트시 할 작업 설정하기
+`useEffect` Hook 을 사용해 컴포넌트가 마운트/언마운트/업데이트 될 때 특정 작업 처리하는 방법
+- 마운트: 처음 나타났을 때
+- 언마운트: 사라질 때
+- 업데이트: 특정 props 가 바뀔 때 
+
+### deps 에 빈 배열 넣기 
+컴포넌트 마운트 시에만 호출 
+```javascript
+useEffect(() => {  // 마운트
+    console.log('Components appeared.');
+    return () => {  // 언마운트 (cleanup 함수)
+        console.log('Components disappeared.');
+    };
+}, []);
+```
+`useEffect` 사용 시 첫 번째 파라미터에는 함수, 두 번째 파라미터에는 의존값이 들어있는 배열(`deps`)을 넣음
+
+`useEffect` 에서는 함수를 반환할 수 있는데, 이를 `cleanup` 함수라고 함 (`useEffect` 에 대한 뒷정리)  
+→ `deps` 가 비어있는 경우 컴포넌트가 사라질 때 `cleanup` 함수가 호출됨 
+
+마운트 시에 하는 작업들 
+- `props` 로 받은 값을 컴포넌트의 로컬 상태로 설정 
+- 외부 API 요청
+- 라이브러리 사용
+- setInterval 을 통한 반복 작업 / setTimeout 을 통한 작업 예약  
+
+언마운트 시에 하는 작업들 
+- setInterval, setTimeout 을 사용하여 등록한 작업들 clear 하기 (clearInterval, clearTimeout)  
+- 라이브러리 인스턴스 제거 
+
+### deps 에 특정 값 넣기 
+컴포넌트가 마운트 될 때, 지정한 값이 바뀔 때 호출  
+`deps` 안에 특정 값이 있다면 언마운트 시, 값이 바뀌기 직전에도 호출됨
+```javascript
+useEffect(() => {
+    console.log('User value set');
+    console.log(user);
+    return () => {
+        console.log('Before the user changes...');
+        console.log(user);
+    };
+}, [user]);
+```
+`useEffect` 안에서 사용하는 상태나, props 가 있다면 `useEffect`의 `deps` 에 넣어주어야 함 (규칙)  
+만약 `deps` 에 넣지 않는다면 `useEffect` 에 등록한 함수가 실행될 때 최신 props/상태를 가르키지 않게 됨 
+
+### deps 파라미터를 생략하기 
+컴포넌트가 리렌더링될 때마다 호출됨 
+```javascript
+useEffect(() => {
+    console.log(user);
+});
+```
+
+> 참고  
+> 리액트 컴포넌트는 부모 컴포넌트가 리렌더링되면, 자식 컴포넌트도 리렌더링됨  
+> 실제 DOM 에 변화가 반영되는 것은 바뀐 내용이 있는 컴포넌트에만 해당함  
+> 하지만, Virtual DOM 에는 모든걸 다 렌더링함 → 컴포넌트 최적화 필요 
