@@ -416,7 +416,8 @@ const onToggle = id => {
 }
 ```
 
-`onToggle` 함수를 받아와 `active` 속성에 따라 색상 변경하기
+`onToggle` 함수를 받아와 `active` 속성에 따라 색상 변경하기  
+(style 속성에도 js 사용 가능)
 ```javascript
 <b
     style={{
