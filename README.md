@@ -8,8 +8,10 @@
 [# 10. useRef 로 특정 DOM 선택하기](#10-useref-로-특정-dom-선택하기)  
 [# 11. 배열 렌더링하기](#11-배열-렌더링하기)  
 [# 12. useRef 로 컴포넌트 안의 변수 만들기](#12-useref-로-컴포넌트-안의-변수-만들기)  
-[# 13. 배열에 항목 추가하기](#13-배열에-항목-추가하기)
-[# 14. 배열에 항목 제거하기](#14-배열에-항목-제거하기)
+[# 13. 배열에 항목 추가하기](#13-배열에-항목-추가하기)  
+[# 14. 배열에 항목 제거하기](#14-배열에-항목-제거하기)  
+[# 15. 배열 항목 수정하기](#15-배열-항목-수정하기)  
+
 
 ## 05. props 를 통해 컴포넌트에게 값 전달하기
 ### props 는 객체 형태로 전달  
@@ -390,11 +392,39 @@ const onCreate = () => {
 
 배열에 있는 항목 제거 시, 추가할 때와 마찬가지로 불변성을 지키면서 업데이트해야 함  
 → `filter` 배열 내장 함수 사용  
- &nbsp; &nbsp; &nbsp; (특정 조건이 만족하는 원소들만 추출하여 새로운 배열을 만듦)
+(특정 조건이 만족하는 원소들만 추출하여 새로운 배열을 만듦)
 ```javascript
 const onRemove = id => {
     // user.id 가 파라미터로 일치하지 않는 원소만 추출해서 새로운 배열을 만듬
     // = user.id 가 id 인 것을 제거함
     setUsers(users.filter(user => user.id !== id));
 };
+```
+
+## 15. 배열 항목 수정하기
+`onToggle` 함수에서 `active` 속성 값 수정하기  
+배열의 불변성을 유지하면서 배열 업데이트 할 때도 `map` 함수 사용 가능 
+
+클릭한 컴포넌트의 `id` 값을 비교하여 `id` 가 다르다면 그대로 두고, 같다면 `active` 값 반전시키기
+```javascript
+const onToggle = id => {
+    setUsers(
+        users.map( user =>
+            user.id === id ? {...user, active: !active} : user
+        )
+    )
+}
+```
+
+`onToggle` 함수를 받아와 `active` 속성에 따라 색상 변경하기
+```javascript
+<b
+    style={{
+        cursor: 'pointer',
+        color: user.active ? 'green' : 'black'
+    }}
+    onClick={() => onToggle(user.id)}
+>
+    {user.username}
+</b>
 ```
