@@ -14,7 +14,8 @@
 [# 16. useEffect 를 사용하여 마운트/언마운트/업데이트시 할 작업 설정하기](#16-useeffect-를-사용하여-마운트언마운트업데이트시-할-작업-설정하기)  
 [# 17. useMemo 를 사용하여 연산한 값 재사용하기](#17-usememo-를-사용하여-연산한-값-재사용하기)  
 [# 18. useCallback 을 사용하여 함수 재사용하기](#18-usecallback-을-사용하여-함수-재사용하기)  
-[# 19. React.memo 를 사용한 컴포넌트 리렌더링 방지](#19-reactmemo-를-사용한-컴포넌트-리렌더링-방지)
+[# 19. React.memo 를 사용한 컴포넌트 리렌더링 방지](#19-reactmemo-를-사용한-컴포넌트-리렌더링-방지)  
+[# 20. useReducer 를 사용하여 상태 업데이트 로직 분리하기](#20-usereducer-를-사용하여-상태-업데이트-로직-분리하기)  
 
 ## 05. props 를 통해 컴포넌트에게 값 전달하기
 ### props 는 객체 형태로 전달  
@@ -594,3 +595,58 @@ export default React.memo(
 `React.memo`로 특정 값들만 비교하는 방법  
 → 두 번째 파라미터로 `propsAreEqual` 함수 사용  
 → 오히려 의도치 않은 버그 발생 우려 (필요한 다른 함수들의 최신 값 참조 x)
+
+## 20. useReducer 를 사용하여 상태 업데이트 로직 분리하기
+`useReducer`: `useState`와 같이 상태 업데이트  
+컴포넌트 상태 업데이트 로직을 컴포넌트에서 분리 가능 (컴포넌트 바깥, 외부 파일)
+
+```javascript
+function reducer(state, action) {
+    // 새로운 상태를 만드는 로직
+    // const nextState = ...
+    return nextState;
+}
+```
+- `reducer(state, action)`: 현재 상태와 액션 객체를 파라미터로 받아와 새로운 상태 반환  
+- `action`: 업데이트를 위한 정보를 지님. 주로 `type` 값을 지닌 객체 형태로 사용 (꼭 지킬 필요 x)
+- `type` 프로퍼티를 통해 switch 문으로 분기하여 사용 
+
+```javascript
+// 카운터에 1을 더하는 액션
+{
+  type: 'INCREMENT'
+}
+// input 값을 바꾸는 액션
+{
+  type: 'CHANGE_INPUT',
+  key: 'email',
+  value: 'tester@react.com'
+}
+// 새 할 일을 등록하는 액션
+{
+  type: 'ADD_TODO',
+  todo: {
+    id: 1,
+    text: 'useReducer 배우기',
+    done: false,
+  }
+}
+```
+- `action` 의 객체 형태는 자유
+- `type` 값은 대문자와 _ 로 구성
+
+```javascript
+const [state, dispatch] = useReducer(reducer, initialState);
+```
+- `state`: 앞으로 컴포넌트에서 사용할 수 있는 상태
+- `dispatch`: 액션을 발생시키는 함수 → e.g. `dispatch({ type:'INCREMENT' })`
+- `useReducer(reducer, initialState)`: `reducer` 함수와 초기 상태를 파라미터로 받음 
+
+```javascript
+setUsers(users => users.concat(user));
+setInputs({
+  username: '',
+  email: ''
+});
+```
+이처럼 한 함수에서 setter 를 여러번 사용해야 한다면 `useState` 와 `useReducer` 중 무엇이 편할지 생각하여 선택 
