@@ -13,6 +13,7 @@
 [# 15. 배열 항목 수정하기](#15-배열-항목-수정하기)  
 [# 16. useEffect 를 사용하여 마운트/언마운트/업데이트시 할 작업 설정하기](#16-useeffect를-사용하여-마운트언마운트업데이트시-할-작업-설정하기)  
 [# 17. useMemo 를 사용하여 연산한 값 재사용하기](#17-usememo-를-사용하여-연산한-값-재사용하기)  
+[# 18. useCallback 을 사용하여 함수 재사용하기](#18-usecallback-을-사용하여-함수-재사용하기)  
 
 ## 05. props 를 통해 컴포넌트에게 값 전달하기
 ### props 는 객체 형태로 전달  
@@ -266,7 +267,7 @@ return(
 ```
 
 ## 11. 배열 렌더링하기
-`map()` 함수는 배열 안에 있는 각 원소를 변환하여 새로운 배열로 만들어줌  
+`map()` : 배열 안에 있는 각 원소를 변환하여 새로운 배열로 생성
 리액트에서 동적인 배열 렌더링 시 `map()` 함수를 사용해 일반 데이터 배열을 리액트 엘리먼트로 이루어진 배열로 변환하면 됨 
 ```javascript
 import React from 'react';
@@ -492,7 +493,7 @@ useEffect(() => {
 > 하지만, Virtual DOM 에는 모든걸 다 렌더링함 → 컴포넌트 최적화 필요 
 
 ## 17. useMemo 를 사용하여 연산한 값 재사용하기
-성능 최적화를 위해 사용
+`useMemo`: 성능 최적화를 위해 사용
 ```javascript
 function countActiveUsers(users) {
   console.log('Counting active users...');
@@ -511,3 +512,34 @@ const count = useMemo(() => countActiveUsers(users), [users]);
 ```
 `useMemo` 의 첫 번째 파라미터는 어떻게 연산할지 정의하는 함수, 두 번째 파라미터는 deps 배열을 넣어줌  
 deps 배열 안의 내용이 바뀌면 등록된 함수를 호출하여 값을 연산하고, 바뀌지 않았다면 이전 연산 값 재사용 
+
+## 18. useCallback 을 사용하여 함수 재사용하기
+`useCallback`: 특정 함수 재사용 (`useMemo`는 특정 결과 값 재사용)
+```javascript
+const onCreate = useCallback(() => {
+    const user = {
+        id: nextId.current,
+        username,
+        email
+    };
+
+    setUsers(users.concat(user));
+    setInputs({
+        username: '',
+        email: '',
+    });
+
+    nextId.current += 1;
+}, [users, username, email]);
+```
+```javascript
+const onToggle = useCallback(id => {
+    setUsers(
+        users.map(user =>
+            user.id === id ? {...user, active: !user.active} : user
+        )
+    );
+}, [users]);
+```
+함수 안에서 사용하는 상태, props, props 로 받아온 함수는 꼭 `deps` 배열 안에 포함  
+`useCallback` 만으로 눈에 띄는 최적화 x → 컴포넌트 렌더링 최적화 작업 필요 
