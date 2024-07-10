@@ -14,6 +14,7 @@
 [# 16. useEffect 를 사용하여 마운트/언마운트/업데이트시 할 작업 설정하기](#16-useeffect-를-사용하여-마운트언마운트업데이트시-할-작업-설정하기)  
 [# 17. useMemo 를 사용하여 연산한 값 재사용하기](#17-usememo-를-사용하여-연산한-값-재사용하기)  
 [# 18. useCallback 을 사용하여 함수 재사용하기](#18-usecallback-을-사용하여-함수-재사용하기)  
+[# 19. React.memo 를 사용한 컴포넌트 리렌더링 방지](#19-reactmemo-를-사용한-컴포넌트-리렌더링-방지)
 
 ## 05. props 를 통해 컴포넌트에게 값 전달하기
 ### props 는 객체 형태로 전달  
@@ -543,3 +544,53 @@ const onToggle = useCallback(id => {
 ```
 함수 안에서 사용하는 상태, props, props 로 받아온 함수는 꼭 `deps` 배열 안에 포함  
 `useCallback` 만으로 눈에 띄는 최적화 x → 컴포넌트 렌더링 최적화 작업 필요 
+
+## 19. React.memo 를 사용한 컴포넌트 리렌더링 방지
+`React.memo`: 컴포넌트의 props 가 바뀌지 않았다면, 리렌더링을 방지하여 성능 최적화 가능
+```javascript
+export default React.memo(UserList);
+```  
+
+| Username | Email        | [register] |
+|----------|--------------|------------|
+| velopert | (email1.com) | [remove]   |
+| yunnb    | (email2.com) | [remove]   |
+User 중 하나라도 수정하면 모든 User 가 리렌더링되는 현상 최적화 방법  
+→ `setState` 함수의 함수형 업데이트  
+→ `useCallback` 함수의 파라미터에서 최신 props 를 참조하여 `deps` 에 해당 props 를 넣지 않아도 됨 
+```javascript
+const onCreate = useCallback(() => {
+    const user = {
+        id: nextId.current,
+        username,
+        email
+    };
+    setUsers(users => users.concat(user));
+
+    setInputs({
+        username: '',
+        email: ''
+    });
+    nextId.current += 1;
+}, [username, email]);
+```
+```javascript
+const onToggle = useCallback(id => {
+    setUsers(users =>
+        users.map(user =>
+            user.id === id ? { ...user, active: !user.active } : user
+        )
+    );
+}, []);
+```
+`React.memo` 는 불필요한 props 비교 방지를 위해 실제 렌더링을 최적화할 수 있는 상황에서만 사용  
+
+```javascript
+export default React.memo(
+  UserList,
+  (prevProps, nextProps) => prevProps.users === nextProps.users
+);
+```
+`React.memo`로 특정 값들만 비교하는 방법  
+→ 두 번째 파라미터로 `propsAreEqual` 함수 사용  
+→ 오히려 의도치 않은 버그 발생 우려 (필요한 다른 함수들의 최신 값 참조 x)
