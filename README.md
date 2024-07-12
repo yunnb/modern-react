@@ -724,3 +724,43 @@ export default useInputs;
 ```
 </div>
 </details>
+
+## 22. Context API 를 사용한 전역 값 관리
+Context API 사용 시, 프로젝트 안에서 전역적으로 사용할 수 있는 값 관리 가능  
+이 값은 꼭 상태를 가르키지 않아도 됨 → 함수, 외부 라이브러리 인스턴스, DOM 등  
+
+### Context 생성 
+```javascript
+const UserDispatch = React.createContext(null);
+```
+`createContext` 파라미터로 Context 의 기본값 설정 가능 (Context 사용 시 값 미지정 시)
+
+### Context 값 지정
+```javascript
+<UserDispatch.Provider value={dispatch}>...</UserDispatch.Provider>
+```
+Context 생성 시 내부의 Provider 컴포넌트를 이용해 `value` 값 지정 가능  
+Provider 로 감싸진 컴포넌트 중 어디서든지 Context 의 값을 다른 곳에서 조회하여 사용 가능 
+
+### Context 내보내기 
+```javascript
+export const UserDispatch = React.createContext(null);
+
+//...
+function App() {
+    return (
+        <UserDispatch.Provider value={dispatch}>
+            <!--...-->
+        </UserDispatch.Provider>
+    );
+}
+```
+UserDispatch 생성 시 export 로 내보내기 작업도 함께 수행
+```javascript
+import { UserDispatch } from './APP';
+```
+내보낸 후 사용 시 import 로 불러옴 
+
+`useState` 대신 `useReducer` 를 사용하면 `dispatch`를 Context API 를 사용해 전역적으로 
+사용할 수 있도록 해주면 컴포넌트에게 함수 전달할 때 코드 구조가 더 깔끔해짐  
+→ 깊은 곳의 컴포넌트에게 여러 컴포넌트를 거쳐 함수 전달해야한다면 Context API 사용 
