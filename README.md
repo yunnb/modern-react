@@ -556,6 +556,7 @@ export default React.memo(UserList);
 |----------|--------------|------------|
 | velopert | (email1.com) | [remove]   |
 | yunnb    | (email2.com) | [remove]   |
+
 User 중 하나라도 수정하면 모든 User 가 리렌더링되는 현상 최적화 방법  
 → `setState` 함수의 함수형 업데이트  
 → `useCallback` 함수의 파라미터에서 최신 props 를 참조하여 `deps` 에 해당 props 를 넣지 않아도 됨 
