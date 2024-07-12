@@ -16,6 +16,7 @@
 [# 18. useCallback 을 사용하여 함수 재사용하기](#18-usecallback-을-사용하여-함수-재사용하기)  
 [# 19. React.memo 를 사용한 컴포넌트 리렌더링 방지](#19-reactmemo-를-사용한-컴포넌트-리렌더링-방지)  
 [# 20. useReducer 를 사용하여 상태 업데이트 로직 분리하기](#20-usereducer-를-사용하여-상태-업데이트-로직-분리하기)  
+[# 21. 커스텀 Hooks 만들기](#21-커스텀-hooks-만들기)  
 
 ## 05. props 를 통해 컴포넌트에게 값 전달하기
 ### props 는 객체 형태로 전달  
@@ -651,3 +652,24 @@ setInputs({
 });
 ```
 이처럼 한 함수에서 setter 를 여러번 사용해야 한다면 `useState` 와 `useReducer` 중 무엇이 편할지 생각하여 선택 
+
+## 21. 커스텀 Hooks 만들기
+반복되는 코드가 있을 때 사용. `use` 키워드로 시작   
+함수 안에 `useState`, `useEffect`, `useReducer`, `useCallback` 등 Hooks 를 사용해 원하는 기능 구현 후 값 반환 
+
+```javascript
+import { useState, useCallback } from 'react';
+
+function useInputs(initialForm) {
+  const [form, setForm] = useState(initialForm);
+  // change
+  const onChange = useCallback(e => {
+    const { name, value } = e.target;
+    setForm(form => ({ ...form, [name]: value }));
+  }, []);
+  const reset = useCallback(() => setForm(initialForm), [initialForm]);
+  return [form, onChange, reset];
+}
+
+export default useInputs;
+```
