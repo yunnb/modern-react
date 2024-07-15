@@ -761,6 +761,6 @@ import { UserDispatch } from './APP';
 ```
 내보낸 후 사용 시 import 로 불러옴 
 
-`useState` 대신 `useReducer` 를 사용하면 `dispatch`를 Context API 를 사용해 전역적으로 
+`useState` 대신 `useReducer` 를 사용 시 `dispatch`를 Context API 를 사용해 전역적으로 
 사용할 수 있도록 해주면 컴포넌트에게 함수 전달할 때 코드 구조가 더 깔끔해짐  
 → 깊은 곳의 컴포넌트에게 여러 컴포넌트를 거쳐 함수 전달해야한다면 Context API 사용 
