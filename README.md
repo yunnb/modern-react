@@ -719,8 +719,8 @@ export default useInputs;
 ```
 </div>
 
-> - `Object.keys(state)` = `state` 객체의 모든 키를 배열로 반환 -> `["username", "email"]`
-> - `state` 는 폼의 현재 상태 = `useInputs()` 에서 `form`
+> - `Object.keys(state)`: `state` 객체의 모든 키를 배열로 반환 -> `["username", "email"]`
+> - `state`: 폼의 현재 상태 = `useInputs()` 에서 `form`
 > - `.reduce`: 배열의 각 요소를 순회하며, 누적값 (`acc`) 생성. 초기 누적값은 빈 객체 `{}`
 > - `acc`: 누적값을 저장하는 객체. 각 필드를 빈 문자열로 초기화하는 과정에서 사용됨
 > - `current`: 현재 순회 중인 키(필드 이름)
@@ -731,9 +731,9 @@ export default useInputs;
 Context API 사용 시, 프로젝트 안에서 전역적으로 사용할 수 있는 값 관리 가능  
 이 값은 꼭 상태를 가르키지 않아도 됨 → 함수, 외부 라이브러리 인스턴스, DOM 등  
 
-### Context 생성 
+### Context 생성 & 내보내기
 ```javascript
-const UserDispatch = React.createContext(null);
+export const UserDispatch = React.createContext(null);
 ```
 `createContext` 파라미터로 Context 의 기본값 설정 가능 (Context 사용 시 값 미지정 시)
 
@@ -744,24 +744,19 @@ const UserDispatch = React.createContext(null);
 Context 생성 시 내부의 Provider 컴포넌트를 이용해 `value` 값 지정 가능  
 Provider 로 감싸진 컴포넌트 중 어디서든지 Context 의 값을 다른 곳에서 조회하여 사용 가능 
 
-### Context 내보내기 
-```javascript
-export const UserDispatch = React.createContext(null);
+### Context 사용하기
 
-//...
-function App() {
-    return (
-        <UserDispatch.Provider value={dispatch}>
-            <!--...-->
-        </UserDispatch.Provider>
-    );
-}
-```
-UserDispatch 생성 시 export 로 내보내기 작업도 함께 수행
 ```javascript
 import { UserDispatch } from './APP';
 ```
-내보낸 후 사용 시 import 로 불러옴 
+```javascript
+const dispatch = useContext(UserDispatch);
+
+return (
+    <button onClick={() => {dispatch({type: 'REMOVE_USER', id: user.id})}} />
+);
+```
+`useContext` 를 이용해 생성된 Context 사용 
 
 `useState` 대신 `useReducer` 를 사용하면 `dispatch`를 Context API 를 사용해 전역적으로 
 사용할 수 있도록 해주면 컴포넌트에게 함수 전달할 때 코드 구조가 더 깔끔해짐  
@@ -815,12 +810,11 @@ const toggled = todos.map(
 위 방법들은 데이터 구조가 까다로워지면 불변성을 지켜가며 새 데이터 생성이 복잡해짐  
 → Immer 사용하면 상태 업데이트 시, 불변성 관리를 대신함 
 
-### Immer 사용법 
-Immer 설치
+### Immer 설치
 ```
 $ yarn add immer
 ```
-Immer 불러오기 
+### Immer 불러오기 
 ```javascript
 import produce from 'immer';
 ```
@@ -839,3 +833,55 @@ const nextState = produce(state, draft => {
 console.log(nextState);
 // { number: 2, dontChangeMe: 2 }
 ```
+객체가 깊은 곳에 위치하지 않는다면 오히려 코드가 길어지므로 굳이 `immer` 를 사용할 필요 없음
+
+### Immer 와 함수형 업데이트 
+`useState` 로 함수형 업데이트
+```javascript
+const [todo, setTodo] = useState({
+  text: 'Hello',
+  done: false
+});
+
+const onClick = useCallback(() => {
+  setTodo(todo => ({
+    ...todo,
+    done: !todo.done
+  }));
+}, []);
+```
+`Immer` 로 함수형 업데이트 
+```javascript
+const todo = {
+  text: 'Hello',
+  done: false
+};
+
+const updater = produce(draft => {draft.done = !draft.done;});
+const nextTodo = updater(todo);
+
+console.log(nextTodo);
+// { text: 'Hello', done: true }
+```
+`produce` 함수에  
+파라미터 2개 → 첫 번째 파라미터에 넣은 상태를 불변성 유지하며 새로운 상태를 만들어줌  
+파라미터 1개(업데이트 함수) → 반환 값은 새로운 상태가 아닌 상태를 업데이트 해주는 함수가 됨 
+
+```javascript
+const [todo, setTodo] = useState({
+  text: 'Hello',
+  done: false
+});
+
+const onClick = useCallback(() => {
+  setTodo(
+    produce(draft => {
+      draft.done = !draft.done;
+    })
+  );
+}, []);
+```
+결국 `produce`가 반환하는 것이 업데이트 함수이므로 `useState`의 업데이트 함수를 사용할 때 이렇게 구현 가능 
+
+Immer 는 편한 라이브러리지만, 성능적으로는 Immer 를 사용하지 않은 코드가 조금 더 빠름  
+→ 데이터의 구조가 복잡해져 불변성 유지하며 업데이트하려면 코드가 복잡해질 때, 어쩔 수 없을 때만 사용하는 것을 권장 
