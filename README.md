@@ -17,6 +17,8 @@
 [# 19. React.memo 를 사용한 컴포넌트 리렌더링 방지](#19-reactmemo-를-사용한-컴포넌트-리렌더링-방지)  
 [# 20. useReducer 를 사용하여 상태 업데이트 로직 분리하기](#20-usereducer-를-사용하여-상태-업데이트-로직-분리하기)  
 [# 21. 커스텀 Hooks 만들기](#21-커스텀-hooks-만들기)  
+[# 22. Context API 를 사용한 전역 값 관리](#22-context-api-를-사용한-전역-값-관리)  
+[# 23. Immer 를 사용한 더 쉬운 불변성 관리](#23-immer-를-사용한-더-쉬운-불변성-관리)  
 
 ## 05. props 를 통해 컴포넌트에게 값 전달하기
 ### props 는 객체 형태로 전달  
@@ -658,20 +660,18 @@ setInputs({
 함수 안에 `useState`, `useEffect`, `useReducer`, `useCallback` 등 Hooks 를 사용해 원하는 기능 구현 후 값 반환 
 
 ```javascript
-import { useState, useCallback } from 'react';
-
 function useInputs(initialForm) {
   const [form, setForm] = useState(initialForm);
+  
   // change
   const onChange = useCallback(e => {
     const { name, value } = e.target;
     setForm(form => ({ ...form, [name]: value }));
   }, []);
+  
   const reset = useCallback(() => setForm(initialForm), [initialForm]);
   return [form, onChange, reset];
 }
-
-export default useInputs;
 ```
 ### `useInputs` 를 `useReducer` 로 구현하기
 <details>
@@ -704,15 +704,10 @@ function reducer(state, action) {
 
 function useInputs(initialForm) {
     const [form, dispatch] = useReducer(reducer, initialForm);
-
-    // change
+ 
     const onChange = useCallback(e => {
         const {name, value} = e.target;
-        dispatch({
-            type: 'CHANGE_USER',
-            name,
-            value
-        })
+        dispatch({type: 'CHANGE_USER', name, value})
     }, []);
 
     const reset = useCallback(() => {dispatch({type: 'RESET'})}, []);
@@ -723,6 +718,13 @@ function useInputs(initialForm) {
 export default useInputs;
 ```
 </div>
+
+> - `Object.keys(state)` = `state` 객체의 모든 키를 배열로 반환 -> `["username", "email"]`
+> - `state` 는 폼의 현재 상태 = `useInputs()` 에서 `form`
+> - `.reduce`: 배열의 각 요소를 순회하며, 누적값 (`acc`) 생성. 초기 누적값은 빈 객체 `{}`
+> - `acc`: 누적값을 저장하는 객체. 각 필드를 빈 문자열로 초기화하는 과정에서 사용됨
+> - `current`: 현재 순회 중인 키(필드 이름)
+
 </details>
 
 ## 22. Context API 를 사용한 전역 값 관리
@@ -764,3 +766,76 @@ import { UserDispatch } from './APP';
 `useState` 대신 `useReducer` 를 사용하면 `dispatch`를 Context API 를 사용해 전역적으로 
 사용할 수 있도록 해주면 컴포넌트에게 함수 전달할 때 코드 구조가 더 깔끔해짐  
 → 깊은 곳의 컴포넌트에게 여러 컴포넌트를 거쳐 함수 전달해야한다면 Context API 사용 
+
+## 23. Immer 를 사용한 더 쉬운 불변성 관리
+리액트에서 배열, 객체 업데이트 시 직접 수정하면 안되고 불변성을 유지하며 업데이트해야 함
+```javascript
+const object = {
+    a: 1,
+    b: 2
+};
+
+// 잘못된 업데이트
+object.b = 3;  
+
+// 올바른 업데이트
+const nextObject = {
+    ...object,
+    b: 3
+};
+``` 
+
+배열도 `push`, `splice` 등의 함수를 사용하거나 n 번째 항목 직접 수정하면 안됨   
+`concat`, `filter`, `map` 등의 함수를 이용해야 함 
+
+```javascript
+const todos = [
+  {
+    id: 1,
+    text: '할 일 #1',
+    done: true
+  }, 
+];
+
+// (1) concat 사용 - 기존 배열에 새 데이터 삽입하여 배열 생성 
+const inserted = todos.concat({
+  id: 2,
+  text: '할 일 #2',
+  done: false
+});
+
+// (2) filter 사용 - 참인 조건의 요소만으로 배열 생성
+const filtered = todos.filter(todo => todo.id !== 2);
+
+// (3) map 사용 - 각 요소에 함수 호출 후 그 결과로 배열 생성
+const toggled = todos.map(
+  todo => todo.id === 2 ? { ...todo, done: !todo.done } : todo
+);
+```
+위 방법들은 데이터 구조가 까다로워지면 불변성을 지켜가며 새 데이터 생성이 복잡해짐  
+→ Immer 사용하면 상태 업데이트 시, 불변성 관리를 대신함 
+
+### Immer 사용법 
+Immer 설치
+```
+$ yarn add immer
+```
+Immer 불러오기 
+```javascript
+import produce from 'immer';
+```
+`produce` 함수 사용 시 파라미터로 수정할 상태, 업데이트 함수 넣어줌  
+이 업데이트 함수에서는 불변성에 대해 신경쓰지 않고 그냥 작성하면 됨 
+```javascript
+const state = {
+    number: 1,
+    dontChangeMe: 2
+};
+
+const nextState = produce(state, draft => {
+    draft.number += 1;
+});
+
+console.log(nextState);
+// { number: 2, dontChangeMe: 2 }
+```
