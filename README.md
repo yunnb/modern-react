@@ -19,6 +19,8 @@
 [# 21. 커스텀 Hooks 만들기](#21-커스텀-hooks-만들기)  
 [# 22. Context API 를 사용한 전역 값 관리](#22-context-api-를-사용한-전역-값-관리)  
 [# 23. Immer 를 사용한 더 쉬운 불변성 관리](#23-immer-를-사용한-더-쉬운-불변성-관리)  
+[# 24. 클래스형 컴포넌트](#24-클래스형-컴포넌트)  
+
 
 ## 05. props 를 통해 컴포넌트에게 값 전달하기
 ### props 는 객체 형태로 전달  
@@ -885,3 +887,17 @@ const onClick = useCallback(() => {
 
 Immer 는 편한 라이브러리지만, 성능적으로는 Immer 를 사용하지 않은 코드가 조금 더 빠름  
 → 데이터의 구조가 복잡해져 불변성 유지하며 업데이트하려면 코드가 복잡해질 때, 어쩔 수 없을 때만 사용하는 것을 권장 
+
+## 24. 클래스형 컴포넌트
+클래스형 컴포넌트에서는 `render()` 메서드 필수.  
+`render()` 에 렌더링하고 싶은 JSX 반환하고 `props` 조회 시 `this.props` 조회 
+
+`defaultProps` 설정 방법
+- 함수형과 동일한 방법: `Hello.defaultProps = { name: 'no-name' };`
+- 클래스 내부에 `static` 키워드 선언: `static defaultProps = { name: 'no-name' };`
+
+`state`
+- 무조건 객체 형태여야 함 
+- `render` 메서드에서 `state` 조회 시 `this.state` 조회
+
+상태 업데이트: `this.setState`
