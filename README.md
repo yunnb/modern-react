@@ -20,6 +20,8 @@
 [# 22. Context API 를 사용한 전역 값 관리](#22-context-api-를-사용한-전역-값-관리)  
 [# 23. Immer 를 사용한 더 쉬운 불변성 관리](#23-immer-를-사용한-더-쉬운-불변성-관리)  
 [# 24. 클래스형 컴포넌트](#24-클래스형-컴포넌트)  
+[# 25. LifeCycle Method](#25-lifecycle-method)  
+
 
 
 ## 05. props 를 통해 컴포넌트에게 값 전달하기
@@ -900,4 +902,77 @@ Immer 는 편한 라이브러리지만, 성능적으로는 Immer 를 사용하�
 - 무조건 객체 형태여야 함 
 - `render` 메서드에서 `state` 조회 시 `this.state` 조회
 
-상태 업데이트: `this.setState`
+상태 업데이트: `this.setState`  
+
+## 25. LifeCycle Method
+### 생명주기 메서드  
+- 컴포넌트가 브라우저 상에 나타나고, 업데이트되고, 사라지게 될 때 호출되는 메서드들   
+(+ 컴포넌트에서 에러 발생 시 호출되는 메서드도 존재)  
+- 클래스형 컴포넌트에서만 사용 가능 (`useEffect` 와 작동 방식은 다르지만 유사함)
+
+각 시점에 나타나는 생명주기들 ▽
+### 마운트
+**constructor**  
+컴포넌트 생성자 메서드. 컴포넌트 생성 시 가장 먼저 실행 됨
+```
+constructor(props) {
+    super(props);
+    console.log("constructor");
+}
+```
+**getDerivedStateFromProps**  // derived: 유래된, 파생된  
+`props`로 받아온 것을 `state`에 넣어주고 싶을 떄 사용  
+```
+static getDerivedStateFromProps(nextProps, prevState) {
+    console.log("getDerivedStateFromProps");
+    if (nextProps.color !== prevState.color) return {color: nextProps.color};
+    return null;
+```
+다른 생명주기 메서드들과 달리 앞에 `static` 필요. 내부에서 `this` 조회 불가  
+특정 개체 반환 시 해당 객체 내용이 컴포넌트의 `state`로 설정됨. 반면 `null` 반환 시 아무 일도 발생 x  
+이 메서드는 컴포넌트 처음 렌더링 전, 리렌더링 전에도 매번 실행 됨
+
+**render**  
+컴포넌트를 렌더링 하는 메서드
+
+**componentDidMount**  
+컴포넌트 첫 렌더링을 마친 후 호출되는 메서드  
+
+### 업데이트
+**getDerivedStateFromProps**  
+
+**shouldComponentUpdate**  
+컴포넌트가 리렌더링 할지 말지 결정하는 메서드 
+
+**render**  
+
+**getSnapshotBeforeUpdate**  
+컴포넌트에 변화가 일어나기 직전의 DOM 상태를 가져와 특정 값을 반환  
+그 다음 발생하게 되는 `componentDidUpdate` 함수에서 받아와 사용 가능
+```
+getSnapshotBeforeUpdate(prevProps, prevState) {
+    console.log("getSnapshotBeforeUpdate");
+    if (prevProps.color !== this.props.color) return this.myRef.style.color;
+    return null;
+}
+```
+
+**componentDidUpdate**  
+리렌더링이 마치고, 화면에 원하는 변화가 모두 반영된 후 호출되는 메서드  
+3 번째 파라미터로 `getSnapshotBeforeUpdate` 에서 반환한 값 조회 가능  
+```
+componentDidUpdate(prevProps, prevState, snapshot) {
+    console.log("componentDidUpdate", prevProps, prevState);
+    if (snapshot) console.log("업데이트 되기 직전 색상: ", snapshot);
+}
+```
+
+### 언마운트
+컴포넌트가 화면에서 사라지는 것
+**componentWillUnmount**  
+컴포넌트가 화면에서 사라지기 직전에 호출 
+```
+componentWillUnmount() {
+    console.log("conponentWillUnmount");
+}
+```
