@@ -21,6 +21,7 @@
 [# 23. Immer 를 사용한 더 쉬운 불변성 관리](#23-immer-를-사용한-더-쉬운-불변성-관리)  
 [# 24. 클래스형 컴포넌트](#24-클래스형-컴포넌트)  
 [# 25. LifeCycle Method](#25-lifecycle-method)  
+[# 26. componentDidCatch 로 에러 잡아내기 / Sentry 연동](#26-componentdidcatch-로-에러-잡아내기--sentry-연동)
 
 
 
@@ -132,7 +133,7 @@ const onIncrease = () => {
 > return prevNumber + 1;
 > }
 > ```
-> ```javascript
+> ``` 
 > // 익명 함수로 변경 
 > function (preveNumber) { 
 > return prevNumber +1;
@@ -619,7 +620,7 @@ function reducer(state, action) {
 - `action`: 업데이트를 위한 정보를 지님. 주로 `type` 값을 지닌 객체 형태로 사용 (꼭 지킬 필요 x)
 - `type` 프로퍼티를 통해 switch 문으로 분기하여 사용 
 
-```javascript
+``` 
 // 카운터에 1을 더하는 액션
 {
   type: 'INCREMENT'
@@ -976,3 +977,52 @@ componentWillUnmount() {
     console.log("conponentWillUnmount");
 }
 ```
+
+## 26. componentDidCatch 로 에러 잡아내기 / Sentry 연동
+### 리액트 앱에서 에러가 발생하는 상황 
+```javascript
+function User({user}) {
+    if (!user) return null;
+}
+```
+`user` 값이 존재하지 않는다면 `null`을 렌더링하게 하여 적어도 에러는 발생하지 않도록 함  
+이렇게 데이터가 없으면 `null` 또는 `<div>loading...<div>`과 같은 결과물 렌더링  
+
+```javascript
+function Users({user, onToggle}) {
+    // onToggle 호출 ~~
+}
+
+Users.defaultProps = {
+    onToggle: () => {
+        console.warn('onToggle is missing!');
+    }
+}
+```
+컴포넌트에 `onToggle`을 prop 로 넣어주는 것을 까먹지 않기 위해 `defaultProps` 설정  
+
+### componentDidCatch 로 에러 잡아내기 
+```javascript
+class ErrorBoundary extends Component {
+    state = {error: false};
+    
+    componentDidCatch(error, info) {
+        console.log('에러가 발생했습니다.');
+        console.log({error, info});
+        this.setState({error: true});
+    }
+
+    render() {
+        if (this.state.error) return <h1>에러 발생!</h1>;
+        
+        return this.props.children;
+    }
+}
+
+export default ErrorBoundary;
+```
+`componentDidCatch` 첫 번째 파라미터: 에러 내용, 두 번째 파라미터: 에러 발생 위치  
+
+### Sentry 연동  
+실제 서비스에서는 `componentDidCatch`가 호출되는 일은 "없어야 하는게" 맞음.  
+Sentry 라는 상용 서비스를 사용해 `error`와 `info` 값을 전달하면 수월하게 작업 가능  
