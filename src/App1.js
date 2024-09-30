@@ -55,7 +55,7 @@ function reducer(state, action) {
 // UserDispatch 라는 이름으로 내보내줌
 export const UserDispatch = React.createContext(null);
 
-function App() {
+function App1() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const {users} = state;
 
@@ -70,4 +70,4 @@ function App() {
   );
 }
 
-export default App;
+export default App1;

@@ -49,7 +49,7 @@ Hello.defaultProps = {
 
 ### 컴포넌트 태그 사이 넣은 값 조회
 ```javascript
-function App() {
+function App1() {
   return (
     <Wrapper>
       <Hello name="react" color="red"/>

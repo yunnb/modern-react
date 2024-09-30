@@ -1,5 +1,5 @@
 import React, {useContext, useEffect} from 'react';
-import {UserDispatch} from "../App";
+import {UserDispatch} from "../App1";
 
 const User = React.memo(
     function User({user, onRemove, onToggle}) {
