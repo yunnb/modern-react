@@ -39,13 +39,8 @@ const CircleButton = styled.button`
             css`
                 background: #ff6b6b;
 
-                &:hover {
-                    background: #ff8787;
-                }
-
-                &:active {
-                    background: #fa5252;
-                }
+                &:hover { background: #ff8787; }
+                &:active { background: #fa5252; }
 
                 transform: translate(-50%, 50%) rotate(45deg);
             `}
