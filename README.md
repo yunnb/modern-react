@@ -1061,3 +1061,16 @@ axios.post('/users', {
 - 요청 결과
 - 로딩 상태
 - 에러 
+
+```javascript
+useEffect(() => {
+    const fetchUsers = async () => {
+        try {
+            // ...
+            const response = await axios.get('url');
+        } catch (e) {}
+    }
+}, []);
+```
+`useEffect`에 첫 번째 파라미터로 등록하는 함수에는 `async` 사용 불가
+→ 함수 내부에서 `async`를 사용하는 새로운 함수 선언해야 함 
