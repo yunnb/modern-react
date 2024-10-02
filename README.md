@@ -1,5 +1,5 @@
 # 벨로퍼트와 함께하는 모던 리액트
-## 목차
+### 2장
 [# 05. props 를 통해 컴포넌트에게 값 전달하기](#05-props-를-통해-컴포넌트에게-값-전달하기)  
 [# 06. 조건부 렌더링](#06-조건부-렌더링)  
 [# 07. useState 를 통해 컴포넌트에서 바뀌는 값 관리하기](#07-usestate-를-통해-컴포넌트에서-바뀌는-값-관리하기)  
@@ -23,7 +23,8 @@
 [# 25. LifeCycle Method](#25-lifecycle-method)  
 [# 26. componentDidCatch 로 에러 잡아내기 / Sentry 연동](#26-componentdidcatch-로-에러-잡아내기--sentry-연동)
 
-
+### 4장
+[# 01. API 연동의 기본]()
 
 ## 05. props 를 통해 컴포넌트에게 값 전달하기
 ### props 는 객체 형태로 전달  
@@ -1026,3 +1027,37 @@ export default ErrorBoundary;
 ### Sentry 연동  
 실제 서비스에서는 `componentDidCatch`가 호출되는 일은 "없어야 하는게" 맞음.  
 Sentry 라는 상용 서비스를 사용해 `error`와 `info` 값을 전달하면 수월하게 작업 가능  
+
+---
+## 4장 API 연동
+## 01. API 연동의 기본 
+**라이브러리 설치**
+```
+$ yarn add axios
+```
+
+**REST API**  
+원하는 작업에 따라 다른 메서드로 요청
+- GET 데이터 조회
+- POST 데이터 등록
+- PUT 데이터 수정
+- DELETE 데이터 제거
+
+```javascript
+axios.get('/users/1');
+```
+파라미터에는 API 주소를 넣음 
+
+```javascript
+axios.post('/users', {
+    username: 'blabla',
+    name: 'blabla'
+});
+```
+`axios.post()`로 데이터 등록 시 파라미터에 API 주소와 등록하고자 하는 정보 삽입
+
+### useState 와 useEffect 로 데이터 로딩하기 
+요청에 대한 상태 관리 3가지 
+- 요청 결과
+- 로딩 상태
+- 에러 
